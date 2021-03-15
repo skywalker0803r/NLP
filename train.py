@@ -19,7 +19,7 @@ trainloader = DataLoader(trainset, batch_size=256,collate_fn=create_mini_batch)
 testloader = DataLoader(testset, batch_size=256, collate_fn=create_mini_batch)
 
 # def how to train the model
-def train(model,trainloader,device=device,EPOCHS=6,lr=1e-5):
+def train(model,trainloader,device=device,EPOCHS=100,lr=1e-5):
     model.train()
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     best_acc = -np.inf
