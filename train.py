@@ -22,7 +22,7 @@ vaildloader = DataLoader(vaildset, batch_size=64,collate_fn=create_mini_batch)
 testloader = DataLoader(testset, batch_size=512, collate_fn=create_mini_batch)
 
 # def how to train the model
-def train(model,trainloader,vaildloader,device=device,EPOCHS=100,lr=1e-5):
+def train(model,trainloader,vaildloader,device=device,EPOCHS=100,lr=1e-5,debug=False):
     model.train()
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     best_acc = -np.inf
@@ -39,11 +39,14 @@ def train(model,trainloader,vaildloader,device=device,EPOCHS=100,lr=1e-5):
             loss.backward()
             optimizer.step()
             running_loss += loss.item()
+            if debug == True:
+                break
         _,_, acc = get_predictions(model, vaildloader, compute_acc=True)
         print('[epoch %d] loss: %.3f, acc: %.3f' %(epoch + 1, running_loss, acc))
         if acc >= best_acc:
+            best_acc = acc
             print('model is improve so dump model')
-            joblib.dump(model,'./checkpoint/bert_model.pkl')
+            joblib.dump(model,'checkpoint/bert_model.pkl')
 
 if __name__ == "__main__":
-    train(model,trainloader,vaildloader)
+    train(model,trainloader,vaildloader,debug=True)
