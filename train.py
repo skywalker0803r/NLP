@@ -14,12 +14,15 @@ tokenizer = BertTokenizer.from_pretrained("bert-base-chinese")
 
 # 2. dataset and dataloader
 trainset = FakeNewsDataset("train", tokenizer=tokenizer)
+vaildset = FakeNewsDataset("vaild", tokenizer=tokenizer)
 testset = FakeNewsDataset("test", tokenizer=tokenizer)
-trainloader = DataLoader(trainset, batch_size=256,collate_fn=create_mini_batch)
-testloader = DataLoader(testset, batch_size=256, collate_fn=create_mini_batch)
+
+trainloader = DataLoader(trainset, batch_size=512,collate_fn=create_mini_batch)
+vaildloader = DataLoader(vaildset, batch_size=64,collate_fn=create_mini_batch)
+testloader = DataLoader(testset, batch_size=512, collate_fn=create_mini_batch)
 
 # def how to train the model
-def train(model,trainloader,device=device,EPOCHS=100,lr=1e-5):
+def train(model,trainloader,vaildloader,device=device,EPOCHS=100,lr=1e-5):
     model.train()
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     best_acc = -np.inf
@@ -36,11 +39,11 @@ def train(model,trainloader,device=device,EPOCHS=100,lr=1e-5):
             loss.backward()
             optimizer.step()
             running_loss += loss.item()
-        _,_, acc = get_predictions(model, trainloader, compute_acc=True)
+        _,_, acc = get_predictions(model, vaildloader, compute_acc=True)
         print('[epoch %d] loss: %.3f, acc: %.3f' %(epoch + 1, running_loss, acc))
         if acc >= best_acc:
             print('model is improve so dump model')
             joblib.dump(model,'./checkpoint/bert_model.pkl')
 
 if __name__ == "__main__":
-    train(model,trainloader)
+    train(model,trainloader,vaildloader)
