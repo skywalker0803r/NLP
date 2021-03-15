@@ -1,6 +1,7 @@
 import os
 import zipfile
 import pandas as pd
+from sklearn.utils import shuffle
 
 # 1. type <kaggle competitions download -c fake-news-pair-classification-challenge> in cmd
 
@@ -25,9 +26,18 @@ df_train = df_train[~(df_train.title2_zh.apply(lambda x : len(x)) > MAX_LENGTH)]
 df_train = df_train.reset_index()
 df_train = df_train.loc[:, ['title1_zh', 'title2_zh', 'label']]
 df_train.columns = ['text_a', 'text_b', 'label']
-# idempotence, 將處理結果另存成 tsv 供 PyTorch 使用
+
+# 拆分 訓練和驗證
+df_train = shuffle(df_train)
+df_train,df_vaild = df_train.iloc[:-300,:],df_train.iloc[-300:,:]
+
+# 保存訓練集
 df_train.to_csv("input/train.tsv", sep="\t", index=False)
 print(df_train.shape)
+
+# 保存驗證集
+df_vaild.to_csv("input/vaild.tsv", sep="\t", index=False)
+print(df_vaild.shape)
 
 # 4. create testset
 df_test = pd.read_csv('input/test.csv')
