@@ -2,13 +2,15 @@ import os
 import zipfile
 import pandas as pd
 
-# 1.extract data
+# 1. type <kaggle competitions download -c fake-news-pair-classification-challenge> in cmd
+
+# 2. extract data
 file_path = 'fake-news-pair-classification-challenge.zip'
 zf = zipfile.ZipFile(file_path,mode='r')
 zf.extractall(path='./input')
 zf.close()
 
-# 2.create trainset
+# 3.create trainset
 df_train = pd.read_csv('input/train.csv')
 empty_title = ((df_train['title2_zh'].isnull()) \
                | (df_train['title1_zh'].isnull()) \
@@ -27,7 +29,7 @@ df_train.columns = ['text_a', 'text_b', 'label']
 df_train.to_csv("input/train.tsv", sep="\t", index=False)
 print(df_train.shape)
 
-# 3. create testset
+# 4. create testset
 df_test = pd.read_csv('input/test.csv')
 df_test = df_test.loc[:, ["title1_zh", "title2_zh", "id"]]
 df_test.columns = ["text_a", "text_b", "Id"]
