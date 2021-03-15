@@ -27,7 +27,7 @@ def create_mini_batch(samples):
 class FakeNewsDataset(Dataset):
     # 讀取前處理後的 tsv 檔並初始化一些參數
     def __init__(self, mode, tokenizer):
-        assert mode in ["train", "test"]  # 一般訓練你會需要 dev set
+        assert mode in ["train","vaild","test"]  # 一般訓練你會需要 dev set
         self.mode = mode
         # 大數據你會需要用 iterator=True
         self.df = pd.read_csv('input/' + mode + ".tsv", sep="\t").fillna("")
